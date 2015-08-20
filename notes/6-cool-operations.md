@@ -4,3 +4,6 @@
 `pred 'a'` is the "predecessor of char a", or '`'.
 there is also `truncate`, `round`, `ceiling`, and `floor`
 
+in ghci:
+`:show bindings` - show the current bindings made at the prompt
+
