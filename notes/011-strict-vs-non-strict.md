@@ -20,6 +20,9 @@ although I'm not 100% on this one - from what I have learned in the [Summer of
 Haskell][soh] course - _non-strictness_ may allow the compiler to throw that
 thunk out of the final codebase.
 
+Sidenote: this means that things like short-circuting `||` come for free in
+Haskell!
+
 [SO]:http://stackoverflow.com/a/7141537/1529734
 [wiki]: https://en.wikibooks.org/wiki/Haskell/Denotational_semantics
 [soh]: https://youtu.be/iuBwKIcC198?t=1h16m14s
