@@ -3,7 +3,15 @@
 -- the largest number of hops from the root to an Empty. For example, the tree
 -- Empty has height zero; Node "x" Empty Empty has height one; Node "x" Empty
 -- (Node "y" Empty Empty) has height two; and so on.
---
+
+data Tree a = Node a (Tree a) (Tree a) | Empty
+              deriving (Show)
+treeHeight :: Tree a -> Integer
+treeHeight Empty = 0
+treeHeight (Node _ a Empty) = 1 + treeHeight a
+treeHeight (Node _ Empty a) = 1 + treeHeight a
+treeHeight (Node _ a b) = 1 + max ( treeHeight a ) ( treeHeight b )
+
 -- 9. Consider three two-dimensional points a, b, and c. If we look at the
 -- angle formed by the line segment from a to b and the line segment from b to
 -- c, it either turns left, turns right, or forms a straight line. Define a
