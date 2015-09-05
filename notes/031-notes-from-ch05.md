@@ -15,5 +15,17 @@ without its value constructor - _this is what allows us to make a type abstract_
 if we omit exports everything is exported. `module X where`
 if we export Unit, then nothing is exported. `module X() where`
 
+ghc expects a `Main` file. This can be configured accoring to the `main-is`
+file
+
+in haskell, much like with the V8 optimizing and non-optimizing compilers, you
+want to seperate out points of uncertainty (io/try-catch) from the optimizable
+code.
+
+relying on type inference is a bad idea - adds degrees of freedom for the
+compiler.
+
+`undefined` and `error::[Char]->a` will both typecheck no matter where we use
+it. 
 
 
