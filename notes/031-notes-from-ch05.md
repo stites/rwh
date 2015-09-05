@@ -25,7 +25,19 @@ code.
 relying on type inference is a bad idea - adds degrees of freedom for the
 compiler.
 
-`undefined` and `error::[Char]->a` will both typecheck no matter where we use
-it. 
+`undefined::a` and `error::[Char]->a` will both typecheck no matter where we use
+it. Notice that `undefined` has type `a`. it looks like undefined is used to
+stub things.
+
+composing things is called "point-free style" not because of the `.` but becaus
+_point_ is synonymous to _value_ - so a "point free" expression makes no
+reference of the values that it operates on. The opposite is "pointy"
+
+association lists (_hashmaps?_) are done with lists of tuples
+
+_what happens if we nest helper functions? are they regenerated for every
+function in the compiler?_
+
+use explicit imports!
 
 

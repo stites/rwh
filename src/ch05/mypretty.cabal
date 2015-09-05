@@ -1,0 +1,16 @@
+Name: mypretty
+Version: 0.1
+--------------------------
+Synopsis:
+Description:
+Author: Sam Stites
+Maintainer: sam@stites.io
+Category:
+--------------------------
+Cabal-Version: >= 1.2
+library
+  Exposed-Modules: Prettify
+                   PrettyJSON
+                   JSONLib
+  Build-Depends: base >= 2.0
+
