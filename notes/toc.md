@@ -1,7 +1,6 @@
 RWH
 ===============
 READ:
-13. Data structures
 14. Monads
 15. Programming with monads
 <http://learnyouahaskell.com/functors-applicative-functors-and-monoids>
