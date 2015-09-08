@@ -1,7 +1,6 @@
 RWH
 ===============
 READ:
-11. Testing and quality assurance
 13. Data structures
 14. Monads
 15. Programming with monads
