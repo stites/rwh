@@ -8,6 +8,8 @@ ghci stuff to be aware of:
 + fromIntegral makes types match, evaluates to the Num type.
 + functions have the HIGHEST precidence.
 + `:t otherwise :: Bool` otherwise is an alias for True
++ _let and where are allowed in a function - THEY ARE NEVER EVALUATED UNTIL
+LATER!!!_
 + function type definitions are functions too!
 + type coercion/declaration is also a function!
 + _ask person about doubly linked lists!_
