@@ -15,15 +15,15 @@ PROJECT:
 17. The foreign function interface
 *18. Monad transformers*
 19. Error handling
-20. Systems programming
-21. Working with databases
-~22. Web client programming~ -> something else
 PROJECT:
 - set up stack
 - set up some basic testing stuff
 - plan out a V0.1
 - split priorities
 
+20. Systems programming
+21. Working with databases
+~22. Web client programming~ -> something else
 24. Basic concurrent and parallel programming
 25. Profiling and tuning for performance
 26. Advanced library design: building a Bloom filter
