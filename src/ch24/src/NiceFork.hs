@@ -16,7 +16,7 @@ newtype ThreadManager =
   -- this way any thread that tries to look at the map will have consistent view of
   -- it the association list mVar takes a thread Id and an MVar of that thread's
   -- status... This seems pretty hairy: what if you update the old list? non issue
-  Mgr $ MVar $ M.Map ThreadId $ MVar ThreadStatus
+  Mgr ( MVar ( M.Map ThreadId ( MVar ThreadStatus )))
   deriving (Eq)
 
 {- make a new thread manager -}
@@ -37,10 +37,10 @@ forkManaged (Mgr mgr) body =
   --   (3) always release the resource even when an exception is thrown. Rethrow the
   --       exception.
   -}
-  modifyMVar mgr $ \ m ->
-    newEmptyMVar >>= state
-    tid =<< forkIO $
-      try body >>= result
+  modifyMVar mgr $ \ m -> do
+    state <- newEmptyMVar
+    tid <- forkIO $ do
+      result <- try body
       putMVar state (either Threw (const Finished) result)
     return (M.insert tid state m, tid)
 
@@ -63,8 +63,8 @@ getStatus (Mgr mgr) tid =
 -- thread terminates before returning
 -}
 waitFor :: ThreadManager -> ThreadId -> IO (Maybe ThreadStatus)
-waitFor (Mgr mgr) tid =
-  maybeDone =<< modifyMVar mgr $ \ m ->
+waitFor (Mgr mgr) tid = do
+  maybeDone <- modifyMVar mgr $ \ m ->
     -- Map's updateLookupWithKey: combines looking up a key with
     -- modifying/removing the value
     return $ case M.updateLookupWithKey (\_ _-> Nothing) tid m of
