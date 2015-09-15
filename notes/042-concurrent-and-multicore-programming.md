@@ -28,4 +28,12 @@ they are executed.
 Threads are good for hiding latency and, you know, normal concurrent
 programming stuff.
 
+Funnily enough, the easiest and simlist way to share information between two threads is to have them share a variable - this is okay since haskell only allows for immutable data!
+
+because of this, we need to have threads actively communicate with eachother: threads have no idea if the other is still executing, has completed, or has crashed.
+
+`MVar` is how we do this - it's a single-element box that can have things added to it, or removed.
+
+if we try to add
+
 [1]:http://chimera.labs.oreilly.com/books/1230000000929/index.html
