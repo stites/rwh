@@ -13,7 +13,7 @@ main = do
       Nothing -> return ()
       Just "" -> return () -- treat no name as "want to quit"
       Just name -> do
-        catch (\_-> putStrLn "failure")   $ do
+        --handle (\_-> putStrLn "failure") $ do
           content <- L.readFile name
           forkIO (compressFile name content)
           return ()
