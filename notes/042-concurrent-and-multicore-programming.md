@@ -55,5 +55,38 @@ thread completes last.
 Note: we can create a monadic function or action in pure code, then pass it around
 until we end up in a monad where we can use it.
 
+MVar and Chan are non-strict. It's not an issue, but people can forget this - maybe
+because it's in IO - this can also cause problems with space/performance questions.
+
+Chan always succeeds immediately so there is a potential risk in its use: If one
+thread writes to a `Chan` more oftern than another reading thread, the `Chan` will
+pile up will queue messages at an unreadable rate and we may get a memory leak.
+
+Deadlock and Starvation
+-----------------------------
+
+One classic way to make a multithreaded program deadlock is to forget the order in
+which we must acquire locks. This kind of bug is so common, it has a name: _lock
+order inversion_.
+
+Haskell has no locks! but MVar is prone to the order inversion problem.
+
+The usual way to solve an order inversion problem is to always follow a consistent
+order when acquiring resources. Since this requires manual adherence to a convention,
+it's easy to miss in practice.
+
+Deadlock sucks. Even in haskell. That's what I'm getting from this.
+
+_Starvation_ is when a thread hogs a shared resource, preventing another thread from
+using it. This can be caused or emphasized by MVar's non-strict nature.
+
+Putting a thunk into an MVar makes it expensive to evaluate, and taking a thunk out
+of an MVar should also be cheap, but evaluating the thunk might become crazy
+compute-heavy and humble expectations.
+
+Starvation sucks. Even in haskell.
+
+BUT we have STMs to the rescue! More on this later.
+
 [1]:http://chimera.labs.oreilly.com/books/1230000000929/index.html
 
