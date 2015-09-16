@@ -52,4 +52,8 @@ this safe?_
 When we have long-running worker threads, we do a lot of work to ensure that the main
 thread completes last.
 
+Note: we can create a monadic function or action in pure code, then pass it around
+until we end up in a monad where we can use it.
+
 [1]:http://chimera.labs.oreilly.com/books/1230000000929/index.html
+

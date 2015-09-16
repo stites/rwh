@@ -1,15 +1,18 @@
+{-# LANGUAGE ExistentialQuantification #-}
+
 module NiceFork (
   ThreadManager, newManager, forkManaged, getStatus, waitFor, waitAll
   ) where
 
+import Control.Monad
 import Control.Concurrent
 import Control.Exception (Exception, try)
 import qualified Data.Map as M
 
-data ThreadStatus = Running
-   | Finished --terminated normally
+data ThreadStatus = forall e. Exception e => Running
+   | Finished -- terminated normally
    | Threw Exception -- killed by uncaught exception
-     deriving (Eq, Show)
+     deriving (Eq, Show, Exception)
 
 newtype ThreadManager =
   -- Mgr takes an MVar association list: this way we "modify" it with new versions
@@ -64,17 +67,13 @@ getStatus (Mgr mgr) tid =
 -}
 waitFor :: ThreadManager -> ThreadId -> IO (Maybe ThreadStatus)
 waitFor (Mgr mgr) tid = do
-  maybeDone <- modifyMVar mgr $ \ m ->
+  join . modifyMVar mgr $ \ m ->
     -- Map's updateLookupWithKey: combines looking up a key with
     -- modifying/removing the value
     return $ case M.updateLookupWithKey (\_ _-> Nothing) tid m of
                -- we always want to remove the MVar holding the threads state:
-               (Nothing, _) -> (m, Nothing)
-               (done, m') -> (m', done)
-  -- finally, we extract the value and return it
-  case maybeDone of
-    Nothing -> return Nothing
-    Just st -> Just `fmap` takeMVar st
+               (Nothing, _) -> (m, return Nothing)
+               (Just st, m') -> (m', Just `fmap` takeMVar st)
 
 {- block until all managed threads terminate, ignore statuses -}
 waitAll :: ThreadManager -> IO ()
