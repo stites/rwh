@@ -88,5 +88,77 @@ Starvation sucks. Even in haskell.
 
 BUT we have STMs to the rescue! More on this later.
 
+=====================
+
+GHC programs use one core, even when explicitly writing code concurrently.
+We must explicitly indicate this at link time, with the `-threaded` flag, when we
+make executablables
+
+"unthreaded" runtimes written concurrently will run everythingn in one system thread
+  - This runtime is highly efficient for creating threads and passing data
+around via `MVar`s
+
+"threaded" runtimes use multiple system threads and has more overhead for creating threads and using `MVar`s
+
+you one pass `-N` to use all processors, and `-N4`, or similar to specify the number
+of cores
+
+anything with the commandline flag `+RTS`, up until `-RTS` will be evaluated in
+the runtime system, not our program.
+
+getArgs does not get any runtime options.
+
+module `GHC.Conc` exports `numCapabilities` which tells us the number of cores the
+runtime system has with the `-N` RTS option.
+
+making programs threaded looks like this:
+
+    $ ghc -c NumCapabilities.hs
+    $ ghc -threaded -o NumCapabilities NumCapabilities.o
+    $ ./NumCapabilities +RTS -N4 -RTS foo
+    command line arguments: ["foo"]
+    number of cores: 4
+
+garbage collector used by GHC 6.8.3 is single threaded, but I think it is
+multithreaded now.
+
+the lower overhead of the non-threaded runtime may boost performance. so we
+could be better off if we design our programs to run four simultanious copies,
+non-threaded, than using four cores. Benchmark and see for yourself.
+
+switching to the threaded runtime will not necessarily turn out as expected
+
+Parallel programming
+====================
+
+`seq` evaluates an expression to head normal form (HNF). this is the same as
+Weak-head normal form (WHNF) for normal data. For functions things are different,
+find more on Stack overflow [here][so]. Unfortunately, the haskell wiki
+disputes this as false. _So check in on this yourself_
+
+`par` function is provided by `Control.Parallel`. It does the same as `seq` and
+evaluates the left to WHNF, but does it in parallel with other evaluations.
+
+seq: the compiler does WHNF only if it knows that evaluating the right argument
+first would improve performance.
+
+par: run rigth before left (WHNF...?) every time.
+
+you need to know what to evaluate in parallel. Non-strict evaluation can get in the way of this, which is why we `force` in the parallel sort
+
+par does not promise to evaluate an expression in parallel with another - it
+does it if it "makes sense"... it's wishy washy, but is better than a garuntee and
+gives the runtime system freedom to act intelligently.
+
+runtime could decide that an expression is too cheap to be worth evaluating in
+parallel or it could notice that all cores are currently busy, so "sparking" a
+new parallel evaluation will lead to there being more runnable threads than
+there are cores available to execute them _what happens in this case?_.
+
+par is somewhat intelligent at runtime, so we can use it everywhere and assume
+that performace will trend towards a maximum.
+
+
+[so]: http://stackoverflow.com/questions/6872898/haskell-what-is-weak-head-normal-form
 [1]:http://chimera.labs.oreilly.com/books/1230000000929/index.html
 
