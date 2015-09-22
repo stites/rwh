@@ -158,6 +158,15 @@ there are cores available to execute them _what happens in this case?_.
 par is somewhat intelligent at runtime, so we can use it everywhere and assume
 that performace will trend towards a maximum.
 
+-----------------
+
+Choosing a 'grain size' - the smallest unit of work parceled out to a core -
+can be difficult.
+
+  + If the grain size is too small, cores spend so much of their time on
+    book-keeping and the program will be slower than serial counterpart.
+  + If the grain size is too large, some cores may lie idle due to poor load
+    balancing.
 
 [so]: http://stackoverflow.com/questions/6872898/haskell-what-is-weak-head-normal-form
 [1]:http://chimera.labs.oreilly.com/books/1230000000929/index.html
