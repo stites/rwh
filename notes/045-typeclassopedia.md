@@ -199,8 +199,18 @@ transformer adds a particular capability/feature/effect to any existing monad:
 + ContT: adds continuation handling.
 
 05. MonadFix
-https://wiki.haskell.org/Typeclassopedia#MonadFix
+Monads which support the special fixpoint operation, `mfix`, which is supported in
+GHC by a special "recursive do" notation.
+    
+    mfix :: (a -> m a) -> m a
+
+in a `do` blokc, you may have a `rec` block: normally an embedded `do` block will not
+be accessible by it's parent, but a `rec` block escapes this rule. It's like a `let`
+block for actions.
+
 06. Semigroup
+https://wiki.haskell.org/Typeclassopedia#Semigroup
+
 07. Monoid
 08. Foldable
 09. Traversable
