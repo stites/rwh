@@ -165,7 +165,41 @@ Do notation:
     do { let decls; stmts} → let decls in do { stmts }
 
 04. Monad transformers
+Combine two monads, like `State` and `[]`? use monad transformers. It's not as clean
+as combining Applicatives, but some monads can be combined in certain ways. All monad
+transformers implement:
+
+    class MonadTrans t where
+      lift :: Monad m => m a -> t m a
+
+In short, it allows computations in the base `m` monad to be lifted into computations
+in the transformed monad `t m a`. So `t m a = (t m) a`. Lift must satisfy:
+
+    lift . return  = return
+    lift (m >>= f) = lift m >>= (lift . f)
+
+which is basically just that lift transforms m a computations into t m a computations
+resonably and sends the `return` and `(>>=)` of m to the same ones, but of `t m`
+
+Libraries: `transformers` library provides standard monad transformers. Each monad
+transformer adds a particular capability/feature/effect to any existing monad:
+
++ IdentityT: the identity transformer, which maps a monad to (something isomorphic
+    to) itself. This may seem useless at first glance, but it is useful for the same
+    reason that the id function is useful -- it can be passed as an argument to things
+    which are parameterized over an arbitrary monad transformer, when you do not actually
+    want any extra capabilities.
++ StateT: adds a read-write state.
++ ReaderT: adds a read-only environment.
++ WriterT: adds a write-only log.
++ RWST: conveniently combines ReaderT, WriterT, and StateT into one.
++ MaybeT: adds the possibility of failure.
++ ErrorT: adds the possibility of failure with an arbitrary type to represent errors.
++ ListT: adds non-determinism (however, see the discussion of ListT below).
++ ContT: adds continuation handling.
+
 05. MonadFix
+https://wiki.haskell.org/Typeclassopedia#MonadFix
 06. Semigroup
 07. Monoid
 08. Foldable
