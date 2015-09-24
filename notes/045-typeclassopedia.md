@@ -94,6 +94,76 @@ From a Monoidal standpoint:
 + Associativity: `u ** (v ** w) ≅ (u ** v) ** w`
 
 03. Monad
+Monad is a stricter subset of applicative, where you can shove values back into
+context if they fall out.
+
+    class Monad m where
+      return ::   a -> m a
+      (>>=)  :: m a -> (a -> m b) -> m b
+      (>>)   :: m a ->        m b -> m b
+      m >> n = m >>= \_ ->
+      fail   :: String -> m a
+
+Utility functions:
+`Control.Monad` module utility functions, all of which can be implemented in terms of
+the basic Monad operations - mostly return and (>>=)
+
+`liftM :: Monad m => (a -> b) -> m a -> m b` fmap! just that Monad does not require
+fmap
+`ap :: Monad m => m (a -> b) -> m a -> m b` `<*>`! just that Monad is not an instance
+of Applicative
+`sequence :: Monad m => [m a] -> m [a]` takes a list of computations and combines
+them into one computation which collects a list of their results. could be
+Applicative-only
+`replicateM :: Monad m => Int -> m a -> m [a]` is simply a combination of replicate and
+sequence.
+`when :: Monad m => Bool -> m () -> m ()` conditionally executes a computation,
+evaluating to its second argument if the test is True, and to return () if the test
+is False.
+`mapM :: Monad m => (a -> m b) -> [a] -> m [b]` maps first argument over the second
+and sequences the results
+`forM` is just `mapM` with its arguments reversed.
+`(=<<) :: Monad m => (a -> m b) -> m a -> m b is just (>>=)` with its arguments
+reversed
+`(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c` sort of like function
+composition but with an extra `m` on the result type of each function. More later
+`guard` function is used for instances of `MonadPlus` which is discussed in the
+Monoid section.
+
+underscored variants throw away the result of the computations.
+
+also see filterM, zipWithM, foldM, and forever.
+
+Laws:
+
+    return a >>= k          = k a
+    m        >>= return     = m
+    m >>= (\x -> k x >>= h) = (m >>= k) >>= h
+
+    fmap f xs  =  xs >>= return . f  =  liftM f xs
+
+The first and second laws express the fact that return behaves nicely.
+
+The third law essentially says that (>>=) is associative, sort of.
+
+The last law ensures that fmap and liftM are the same for types which are instances
+of both Functor and Monad—which, as already noted, should be every instance of Monad.
+
+Alternatively:
+
+    return >=> g      =  g
+    g      >=> return =  g
+    (g >=> h) >=> k   =  g >=> (h >=> k)
+
+Note that (>=>) "composes" two functions of type `a -> m b` and `b -> m c`.
+
+Do notation:
+
+                      do e → e
+           do { e; stmts } → e >> do { stmts }
+      do { v <- e; stmts } → e >>= \v -> do { stmts }
+    do { let decls; stmts} → let decls in do { stmts }
+
 04. Monad transformers
 05. MonadFix
 06. Semigroup
